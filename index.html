@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AURA FEMME | Luxury Fashion House</title>
+  <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;1,6..96,400;1,6..96,300&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ══════════════════════════════════════
+       ROOT & RESET
+    ══════════════════════════════════════ */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    :root {
+      --blk:      #050303;
+      --rose:     #c9937a;
+      --rose-lt:  #e8c4b4;
+      --rose-dim: #7a4e3e;
+      --cream:    #f5ede8;
+      --warm:     #1a1210;
+      --muted:    #8a7570;
+      --glass:    rgba(255,255,255,0.03);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--blk);
+      color: #fff;
+      font-family: 'Jost', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--blk); }
+    ::-webkit-scrollbar-thumb { background: var(--rose); border-radius: 4px; }
+
+    /* ══════════════════════════════════════
+       NOISE LAYER
+    ══════════════════════════════════════ */
+    body::before {
+      content:'';
+      position: fixed; inset:0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
+      pointer-events: none; z-index:999; opacity:.5;
+    }
+
+    /* ══════════════════════════════════════
+       CUSTOM CURSOR
+    ══════════════════════════════════════ */
+    #cur-dot, #cur-ring {
+      position:fixed; top:0; left:0;
+      border-radius:50%; pointer-events:none; z-index:9999;
+      transform:translate(-50%,-50%);
+    }
+    #cur-dot  { width:5px; height:5px; background:var(--rose); transition:transform .1s; }
+    #cur-ring {
+      width:32px; height:32px;
+      border: 1px solid rgba(201,147,122,.4);
+      transition: width .35s, height .35s, border-color .35s, left .12s ease, top .12s ease;
+    }
+    body.hovered #cur-ring {
+      width:56px; height:56px;
+      border-color: rgba(201,147,122,.8);
+    }
+
+    /* ══════════════════════════════════════
+       LOADER
+    ══════════════════════════════════════ */
+    #loader {
+      position:fixed; inset:0;
+      background:var(--blk);
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:2rem;
+      z-index:8000;
+      transition: opacity .9s ease, visibility .9s ease;
+    }
+    #loader.gone { opacity:0; visibility:hidden; }
+    .load-logo {
+      font-family:'Bodoni Moda', serif;
+      font-size:clamp(2.5rem,8vw,6rem);
+      letter-spacing:.3em;
+      color:var(--cream);
+      overflow:hidden;
+    }
+    .load-logo span {
+      display:inline-block;
+      opacity:0; transform:translateY(100%);
+      animation: lUp .7s cubic-bezier(.76,0,.24,1) forwards;
+      animation-delay: calc(var(--i)*.06s);
+    }
+    @keyframes lUp { to { opacity:1; transform:translateY(0); } }
+    .load-line {
+      width:0px; height:1px;
+      background: linear-gradient(90deg, transparent, var(--rose), transparent);
+      animation: lLine 1.4s .5s ease forwards;
+    }
+    @keyframes lLine { to { width: 200px; } }
+    .load-sub {
+      font-size:.6rem; letter-spacing:.6em; text-transform:uppercase;
+      color:var(--rose); opacity:0;
+      animation: lUp .6s 1s forwards;
+    }
+
+    /* ══════════════════════════════════════
+       NAV
+    ══════════════════════════════════════ */
+    nav {
+      position:fixed; top:0; width:100%;
+      z-index:500;
+      padding:2rem 5%;
+      display:flex; align-items:center; justify-content:space-between;
+      transition: background .5s, padding .4s, backdrop-filter .5s;
+    }
+    nav.stuck {
+      background:rgba(5,3,3,.92);
+      backdrop-filter: blur(20px);
+      padding:1.3rem 5%;
+      border-bottom:1px solid rgba(201,147,122,.08);
+    }
+    .nav-logo {
+      font-family:'Bodoni Moda',serif;
+      font-size:1.5rem; letter-spacing:.3em;
+      color:var(--rose-lt); font-weight:700;
+      text-decoration:none;
+    }
+    .nav-logo em { font-style:italic; color:var(--rose); }
+    .nav-links { display:flex; gap:2.5rem; align-items:center; }
+    .nav-links a {
+      font-size:.65rem; letter-spacing:.35em; text-transform:uppercase;
+      font-weight:400; color:rgba(255,255,255,.65);
+      text-decoration:none; position:relative; transition:color .3s;
+    }
+    .nav-links a::after {
+      content:''; position:absolute; bottom:-4px; left:0;
+      width:0; height:1px; background:var(--rose);
+      transition:width .4s cubic-bezier(.76,0,.24,1);
+    }
+    .nav-links a:hover { color:var(--rose-lt); }
+    .nav-links a:hover::after { width:100%; }
+    .nav-bag {
+      width:40px; height:40px;
+      border:1px solid rgba(201,147,122,.3);
+      display:flex; align-items:center; justify-content:center;
+      cursor:none; transition:border-color .3s, background .3s;
+    }
+    .nav-bag:hover { border-color:var(--rose); background:rgba(201,147,122,.08); }
+    .bag-icon { width:14px; height:14px; position:relative; }
+    .bag-icon::before {
+      content:''; position:absolute;
+      top:4px; left:2px; right:2px; bottom:0;
+      border:1px solid var(--rose-lt); border-top:none;
+    }
+    .bag-icon::after {
+      content:''; position:absolute;
+      top:0; left:3px; right:3px; height:6px;
+      border:1px solid var(--rose-lt); border-bottom:none;
+      border-radius:50% 50% 0 0;
+    }
+    .nav-count {
+      font-size:.55rem; background:var(--rose);
+      color:#fff; width:16px; height:16px;
+      border-radius:50%; display:flex; align-items:center; justify-content:center;
+      position:absolute; top:-6px; right:-6px; font-weight:600;
+    }
+
+    /* ══════════════════════════════════════
+       HERO
+    ══════════════════════════════════════ */
+    #hero {
+      height:100vh; position:relative;
+      display:flex; align-items:center; justify-content:center;
+      overflow:hidden;
+    }
+    .hero-bg {
+      position:absolute; inset:0;
+      background:
+        linear-gradient(160deg, rgba(5,3,3,.6) 0%, rgba(26,18,16,.8) 60%, rgba(5,3,3,.9) 100%),
+        url('https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=2070') center/cover no-repeat;
+      transform:scale(1.05);
+      animation:heroZoom 18s ease-in-out infinite alternate;
+    }
+    @keyframes heroZoom {
+      from { transform:scale(1.05) translateX(0); }
+      to   { transform:scale(1.12) translateX(-2%); }
+    }
+    .hero-overlay {
+      position:absolute; bottom:0; left:0; right:0; height:35vh;
+      background:linear-gradient(to top, var(--blk), transparent);
+    }
+
+    /* 3D floating petals */
+    .petal {
+      position:absolute; border-radius:50% 0 50% 0;
+      opacity:0; pointer-events:none;
+      animation: petalFall linear infinite;
+    }
+    @keyframes petalFall {
+      0%   { opacity:0; transform:translateY(-20px) rotate(0deg); }
+      10%  { opacity:.6; }
+      90%  { opacity:.3; }
+      100% { opacity:0; transform:translateY(100vh) rotate(720deg); }
+    }
+
+    .hero-content {
+      position:relative; z-index:2;
+      text-align:center; max-width:900px;
+      padding:0 2rem;
+    }
+    .hero-season {
+      font-size:.6rem; letter-spacing:1em; text-transform:uppercase;
+      color:var(--rose); font-weight:500;
+      opacity:0; animation:fadeUp .8s .6s forwards;
+      display:flex; align-items:center; justify-content:center; gap:1.5rem;
+    }
+    .hero-season::before, .hero-season::after {
+      content:''; flex:1; max-width:60px; height:1px;
+      background:linear-gradient(90deg, transparent, var(--rose));
+    }
+    .hero-season::after { transform:scaleX(-1); }
+    .hero-h1 {
+      font-family:'Bodoni Moda',serif;
+      font-size:clamp(3.5rem,9vw,9rem);
+      font-weight:300; line-height:.95;
+      letter-spacing:-.01em;
+      margin:1.8rem 0 1rem;
+      opacity:0; animation:fadeUp .9s .8s forwards;
+    }
+    .hero-h1 em {
+      font-style:italic; color:var(--rose);
+      display:block; font-size:.85em;
+    }
+    .hero-sub {
+      font-size:.95rem; font-weight:300; line-height:1.9;
+      color:rgba(255,255,255,.6); max-width:460px; margin:0 auto 3rem;
+      opacity:0; animation:fadeUp .9s 1s forwards;
+    }
+    .hero-actions {
+      display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;
+      opacity:0; animation:fadeUp .8s 1.2s forwards;
+    }
+    .btn-primary {
+      padding:1.1rem 3rem;
+      background:var(--rose); color:var(--blk);
+      font-size:.6rem; letter-spacing:.4em; text-transform:uppercase;
+      font-weight:600; border:none; cursor:none;
+      position:relative; overflow:hidden;
+      transition:letter-spacing .4s, box-shadow .4s;
+    }
+    .btn-primary::before {
+      content:''; position:absolute; inset:0;
+      background:var(--rose-lt);
+      transform:translateX(-101%);
+      transition:transform .5s cubic-bezier(.76,0,.24,1);
+    }
+    .btn-primary:hover::before { transform:translateX(0); }
+    .btn-primary:hover { letter-spacing:.55em; box-shadow:0 10px 40px rgba(201,147,122,.35); }
+    .btn-primary span { position:relative; z-index:1; }
+    .btn-ghost {
+      padding:1.1rem 3rem;
+      background:transparent; color:rgba(255,255,255,.8);
+      font-size:.6rem; letter-spacing:.4em; text-transform:uppercase;
+      font-weight:400; border:1px solid rgba(255,255,255,.2); cursor:none;
+      transition:border-color .3s, color .3s;
+    }
+    .btn-ghost:hover { border-color:var(--rose); color:var(--rose); }
+
+    .hero-scroll {
+      position:absolute; bottom:2.5rem; left:50%;
+      transform:translateX(-50%);
+      display:flex; flex-direction:column; align-items:center; gap:.5rem;
+      opacity:0; animation:fadeUp .8s 1.6s forwards;
+    }
+    .hero-scroll span {
+      font-size:.5rem; letter-spacing:.6em; text-transform:uppercase;
+      color:var(--muted);
+    }
+    .scroll-bar {
+      width:1px; height:50px;
+      background:linear-gradient(to bottom, var(--rose), transparent);
+      animation:scrollBar 2s ease-in-out infinite;
+    }
+    @keyframes scrollBar {
+      0%,100% { opacity:.3; transform:scaleY(1) translateY(0); }
+      50%      { opacity:1; transform:scaleY(1.2) translateY(4px); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(28px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* ══════════════════════════════════════
+       MARQUEE
+    ══════════════════════════════════════ */
+    .marquee-wrap {
+      overflow:hidden; padding:1.5rem 0;
+      border-top:1px solid rgba(201,147,122,.1);
+      border-bottom:1px solid rgba(201,147,122,.1);
+      background:var(--warm);
+    }
+    .marquee-track {
+      display:flex; gap:3.5rem;
+      animation:mq 22s linear infinite;
+      width:max-content; white-space:nowrap;
+    }
+    .mq-item {
+      font-family:'Bodoni Moda',serif;
+      font-style:italic; font-size:1.1rem;
+      color:rgba(232,196,180,.5); letter-spacing:.08em;
+    }
+    .mq-star { color:var(--rose); font-style:normal; opacity:.7; }
+    @keyframes mq {
+      from { transform:translateX(0); }
+      to   { transform:translateX(-50%); }
+    }
+
+    /* ══════════════════════════════════════
+       SECTION UTILITY
+    ══════════════════════════════════════ */
+    .s-eyebrow {
+      font-size:.58rem; letter-spacing:.7em; text-transform:uppercase;
+      color:var(--rose); font-weight:500; margin-bottom:1rem;
+      display:flex; align-items:center; gap:1rem;
+    }
+    .s-eyebrow::before {
+      content:''; width:30px; height:1px; background:var(--rose); flex-shrink:0;
+    }
+    .s-h2 {
+      font-family:'Bodoni Moda',serif;
+      font-size:clamp(2.5rem,5vw,4.5rem);
+      font-weight:300; line-height:1.05;
+      color:#fff;
+    }
+    .s-h2 em { font-style:italic; color:var(--rose); }
+
+    /* reveal */
+    .rv {
+      opacity:0; transform:translateY(36px);
+      transition:opacity .9s cubic-bezier(.76,0,.24,1), transform .9s cubic-bezier(.76,0,.24,1);
+    }
+    .rv.on { opacity:1; transform:translateY(0); }
+    .rv-d1 { transition-delay:.12s; }
+    .rv-d2 { transition-delay:.24s; }
+    .rv-d3 { transition-delay:.36s; }
+    .rv-d4 { transition-delay:.48s; }
+
+    /* ══════════════════════════════════════
+       FEATURED STRIP — 3-col asymmetric
+    ══════════════════════════════════════ */
+    #featured {
+      display:grid;
+      grid-template-columns:1fr 1.3fr 1fr;
+      height:90vh; min-height:600px;
+    }
+    .feat-panel {
+      position:relative; overflow:hidden; cursor:none;
+    }
+    .feat-img {
+      position:absolute; inset:0;
+      background-size:cover; background-position:center;
+      transition:transform .9s cubic-bezier(.76,0,.24,1), filter .6s;
+      filter:brightness(.6) saturate(.8);
+    }
+    .feat-panel:hover .feat-img {
+      transform:scale(1.07);
+      filter:brightness(.75) saturate(1);
+    }
+    .feat-panel:nth-child(1) .feat-img {
+      background-image:url('https://images.unsplash.com/photo-1581044777550-4cfa60707c03?auto=format&fit=crop&q=80&w=900');
+    }
+    .feat-panel:nth-child(2) .feat-img {
+      background-image:url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=900');
+    }
+    .feat-panel:nth-child(3) .feat-img {
+      background-image:url('https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&q=80&w=900');
+    }
+    .feat-overlay {
+      position:absolute; inset:0;
+      background:linear-gradient(to top, rgba(5,3,3,.95) 0%, rgba(5,3,3,.2) 50%, transparent 100%);
+    }
+    .feat-content {
+      position:absolute; bottom:0; left:0; right:0;
+      padding:2.5rem 2rem;
+      transform:translateY(60px);
+      transition:transform .6s cubic-bezier(.76,0,.24,1);
+    }
+    .feat-panel:hover .feat-content { transform:translateY(0); }
+    .feat-tag {
+      font-size:.55rem; letter-spacing:.5em; text-transform:uppercase;
+      color:var(--rose); font-weight:600; margin-bottom:.6rem;
+    }
+    .feat-name {
+      font-family:'Bodoni Moda',serif;
+      font-size:1.7rem; font-weight:300; color:#fff; line-height:1.2;
+    }
+    .feat-price {
+      font-size:.8rem; color:var(--rose-lt); margin-top:.4rem; font-weight:300;
+    }
+    .feat-cta {
+      display:inline-flex; align-items:center; gap:.6rem;
+      font-size:.6rem; letter-spacing:.35em; text-transform:uppercase;
+      color:var(--rose); font-weight:600; margin-top:1.2rem;
+      opacity:0; transform:translateX(-8px);
+      transition:opacity .4s .2s, transform .4s .2s;
+      cursor:none;
+    }
+    .feat-panel:hover .feat-cta { opacity:1; transform:translateX(0); }
+    .feat-cta::after { content:'→'; transition:transform .3s; }
+    .feat-panel:hover .feat-cta::after { transform:translateX(4px); }
+
+    /* ══════════════════════════════════════
+       COLLECTION SECTION
+    ══════════════════════════════════════ */
+    #collection {
+      padding:10rem 5%;
+      max-width:1600px; margin:0 auto;
+    }
+    .col-header {
+      display:flex; justify-content:space-between; align-items:flex-end;
+      margin-bottom:5rem;
+    }
+    .col-link {
+      font-size:.6rem; letter-spacing:.4em; text-transform:uppercase;
+      color:var(--rose); border-bottom:1px solid rgba(201,147,122,.3);
+      padding-bottom:.3rem; text-decoration:none;
+      transition:border-color .3s;
+    }
+    .col-link:hover { border-color:var(--rose); }
+
+    .col-grid {
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:1.5px;
+    }
+    .col-card {
+      position:relative; cursor:none;
+      overflow:hidden; background:#0d0908;
+    }
+    .col-card-img {
+      width:100%; aspect-ratio:3/4;
+      background-size:cover; background-position:center;
+      transition:transform .8s cubic-bezier(.76,0,.24,1), filter .5s;
+      filter:brightness(.7) saturate(.85);
+    }
+    .col-card:hover .col-card-img {
+      transform:scale(1.06);
+      filter:brightness(.85) saturate(1.1);
+    }
+    .col-card-body {
+      padding:1.8rem 1.5rem;
+      background:var(--warm);
+      transform:translateY(0);
+      transition:background .3s;
+    }
+    .col-card:hover .col-card-body { background:#211612; }
+    .col-card-cat {
+      font-size:.55rem; letter-spacing:.45em; text-transform:uppercase;
+      color:var(--rose); font-weight:600; margin-bottom:.5rem;
+    }
+    .col-card-name {
+      font-family:'Bodoni Moda',serif;
+      font-size:1.15rem; color:#fff; font-weight:300;
+    }
+    .col-card-price {
+      font-size:.8rem; color:var(--muted); margin-top:.3rem;
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .col-card-price span { color:var(--rose-lt); font-size:.85rem; }
+    .col-card-btn {
+      font-size:.55rem; letter-spacing:.3em; text-transform:uppercase;
+      color:var(--rose); font-weight:600;
+      background:none; border:none; cursor:none;
+      padding:0; transition:letter-spacing .3s;
+    }
+    .col-card:hover .col-card-btn { letter-spacing:.45em; }
+
+    /* images */
+    .cc1 { background-image:url('https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=700'); }
+    .cc2 { background-image:url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=700'); }
+    .cc3 { background-image:url('https://images.unsplash.com/photo-1581044777550-4cfa60707c03?auto=format&fit=crop&q=80&w=700'); }
+    .cc4 { background-image:url('https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&q=80&w=700'); }
+    .cc5 { background-image:url('https://images.unsplash.com/photo-1596704017254-9b121068fb31?auto=format&fit=crop&q=80&w=700'); }
+    .cc6 { background-image:url('https://images.unsplash.com/photo-1585386959984-a4155224a1ad?auto=format&fit=crop&q=80&w=700'); }
+    .cc7 { background-image:url('https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&q=80&w=700'); }
+    .cc8 { background-image:url('https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&q=80&w=700'); }
+
+    /* ══════════════════════════════════════
+       PHILOSOPHY — SPLIT
+    ══════════════════════════════════════ */
+    #philosophy {
+      display:grid; grid-template-columns:1fr 1fr;
+      min-height:80vh;
+    }
+    .phil-visual {
+      position:relative; overflow:hidden;
+    }
+    .phil-img {
+      position:absolute; inset:0;
+      background:url('https://images.unsplash.com/photo-1524169220946-12efd782aab4?auto=format&fit=crop&q=80&w=900') center/cover no-repeat;
+      filter:brightness(.55) saturate(.7);
+      transition:transform 14s ease;
+    }
+    #philosophy:hover .phil-img { transform:scale(1.04); }
+    .phil-veil {
+      position:absolute; inset:0;
+      background:linear-gradient(to right, transparent 60%, var(--blk) 100%);
+    }
+
+    /* 3D sphere decoration */
+    .sphere-wrap {
+      position:absolute; top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      width:300px; height:300px;
+    }
+    .sphere {
+      width:100%; height:100%; border-radius:50%;
+      background:radial-gradient(circle at 35% 35%,
+        rgba(201,147,122,.18) 0%,
+        rgba(201,147,122,.04) 50%,
+        transparent 70%);
+      border:1px solid rgba(201,147,122,.12);
+      animation:spherePulse 6s ease-in-out infinite;
+    }
+    .sphere::before {
+      content:''; position:absolute; inset:20%;
+      border:1px solid rgba(201,147,122,.08);
+      border-radius:50%;
+      animation:spherePulse 4s ease-in-out infinite reverse;
+    }
+    .sphere::after {
+      content:''; position:absolute; inset:40%;
+      border:1px solid rgba(201,147,122,.15);
+      border-radius:50%;
+      animation:spherePulse 3s ease-in-out infinite;
+    }
+    @keyframes spherePulse {
+      0%,100% { transform:scale(1); opacity:.6; }
+      50%      { transform:scale(1.06); opacity:1; }
+    }
+
+    .phil-text {
+      padding:8rem 6rem 8rem 5rem;
+      display:flex; flex-direction:column; justify-content:center;
+      background:var(--warm);
+    }
+    .phil-body {
+      font-size:.95rem; font-weight:300; line-height:2;
+      color:var(--muted); margin:2rem 0;
+    }
+    .phil-quote {
+      font-family:'Bodoni Moda',serif;
+      font-size:1.6rem; font-style:italic; font-weight:300;
+      line-height:1.55; color:#fff;
+      border-left:2px solid var(--rose);
+      padding-left:2rem; margin:2.5rem 0;
+    }
+
+    /* ══════════════════════════════════════
+       STATS BAND
+    ══════════════════════════════════════ */
+    .stats-band {
+      display:grid; grid-template-columns:repeat(4,1fr);
+      gap:1px; background:rgba(201,147,122,.08);
+    }
+    .stat-tile {
+      background:var(--blk);
+      padding:4rem 2.5rem; text-align:center;
+      transition:background .4s;
+    }
+    .stat-tile:hover { background:var(--warm); }
+    .stat-n {
+      font-family:'Bodoni Moda',serif;
+      font-size:3.5rem; font-weight:300; color:var(--rose-lt); line-height:1;
+    }
+    .stat-n em { font-style:italic; color:var(--rose); font-size:2rem; }
+    .stat-lbl {
+      font-size:.58rem; letter-spacing:.45em; text-transform:uppercase;
+      color:var(--muted); margin-top:.8rem;
+    }
+
+    /* ══════════════════════════════════════
+       EDITORIAL / PARALLAX CTA
+    ══════════════════════════════════════ */
+    #editorial {
+      position:relative; min-height:80vh;
+      display:flex; align-items:center; justify-content:center;
+      text-align:center; overflow:hidden;
+    }
+    .ed-bg {
+      position:absolute; inset:-10%;
+      background:url('https://images.unsplash.com/photo-1596704017254-9b121068fb31?auto=format&fit=crop&q=80&w=2000') center/cover no-repeat;
+      filter:brightness(.4) saturate(.6);
+      will-change:transform;
+    }
+    .ed-overlay {
+      position:absolute; inset:0;
+      background:linear-gradient(180deg, var(--blk) 0%, transparent 30%, transparent 70%, var(--blk) 100%);
+    }
+    .ed-content { position:relative; z-index:2; max-width:700px; padding:0 2rem; }
+    .ed-eyebrow {
+      font-size:.58rem; letter-spacing:.8em; text-transform:uppercase;
+      color:var(--rose); font-weight:500; margin-bottom:2rem;
+    }
+    .ed-h2 {
+      font-family:'Bodoni Moda',serif;
+      font-size:clamp(2.5rem,6vw,5.5rem);
+      font-weight:300; font-style:italic; line-height:1.1;
+      color:#fff; margin-bottom:1.5rem;
+    }
+    .ed-p {
+      font-size:.95rem; font-weight:300; line-height:1.9;
+      color:rgba(255,255,255,.55); margin-bottom:3rem;
+    }
+    /* video play button */
+    .play-btn {
+      width:80px; height:80px; border-radius:50%;
+      border:1px solid rgba(201,147,122,.5);
+      display:flex; align-items:center; justify-content:center;
+      margin:0 auto 2rem; cursor:none;
+      position:relative; overflow:hidden;
+      transition:border-color .3s;
+    }
+    .play-btn::before {
+      content:''; position:absolute; inset:0;
+      background:rgba(201,147,122,.15);
+      transform:scale(0); border-radius:50%;
+      transition:transform .5s cubic-bezier(.76,0,.24,1);
+    }
+    .play-btn:hover::before { transform:scale(1); }
+    .play-btn:hover { border-color:var(--rose); }
+    .play-tri {
+      width:0; height:0;
+      border-top:9px solid transparent;
+      border-bottom:9px solid transparent;
+      border-left:16px solid var(--rose-lt);
+      margin-left:4px; position:relative; z-index:1;
+      transition:border-left-color .3s;
+    }
+    .play-btn:hover .play-tri { border-left-color:var(--rose); }
+    .play-label {
+      font-size:.58rem; letter-spacing:.5em; text-transform:uppercase;
+      color:var(--muted); margin-top:.5rem;
+    }
+
+    /* ══════════════════════════════════════
+       TESTIMONIALS
+    ══════════════════════════════════════ */
+    #testimonials {
+      padding:10rem 5%;
+      background:var(--warm);
+    }
+    .test-header { text-align:center; margin-bottom:6rem; }
+    .test-grid {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:1.5px;
+      max-width:1400px; margin:0 auto;
+    }
+    .test-card {
+      background:var(--blk);
+      padding:3.5rem 3rem;
+      position:relative; overflow:hidden;
+      transition:background .4s;
+    }
+    .test-card:hover { background:#0f0b09; }
+    .test-qmark {
+      font-family:'Bodoni Moda',serif;
+      font-size:5rem; font-style:italic; line-height:.8;
+      color:var(--rose); opacity:.2;
+      margin-bottom:1.5rem;
+    }
+    .test-body {
+      font-size:.9rem; font-weight:300; line-height:1.9;
+      color:rgba(255,255,255,.6); margin-bottom:2rem;
+      font-style:italic;
+    }
+    .test-author {
+      font-size:.6rem; letter-spacing:.4em; text-transform:uppercase;
+      color:var(--rose); font-weight:600;
+    }
+    .test-role { font-size:.6rem; color:var(--muted); margin-top:.3rem; }
+
+    /* star row */
+    .test-stars { margin-bottom:1rem; }
+    .test-stars span {
+      color:var(--rose); font-size:.7rem; letter-spacing:.1em;
+    }
+
+    /* ══════════════════════════════════════
+       BOUTIQUE / FLAGSHIP
+    ══════════════════════════════════════ */
+    #boutique {
+      display:grid; grid-template-columns:1.2fr 1fr;
+      min-height:70vh;
+    }
+    .bout-img {
+      background:url('https://images.unsplash.com/photo-1524169220946-12efd782aab4?auto=format&fit=crop&q=80&w=1000') center/cover no-repeat;
+      filter:brightness(.6) saturate(.7);
+      transition:filter .6s;
+      position:relative;
+    }
+    #boutique:hover .bout-img { filter:brightness(.75) saturate(.9); }
+    .bout-text {
+      padding:7rem 5rem;
+      background:var(--warm);
+      display:flex; flex-direction:column; justify-content:center;
+    }
+    .bout-detail {
+      display:flex; flex-direction:column; gap:1.5rem; margin:2.5rem 0;
+    }
+    .bout-row {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:.9rem 0; border-bottom:1px solid rgba(255,255,255,.05);
+    }
+    .bout-key {
+      font-size:.58rem; letter-spacing:.45em; text-transform:uppercase;
+      color:var(--rose); font-weight:600;
+    }
+    .bout-val {
+      font-family:'Bodoni Moda',serif;
+      font-size:1rem; font-style:italic; color:rgba(255,255,255,.75);
+    }
+    .bout-cta { align-self:flex-start; }
+
+    /* ══════════════════════════════════════
+       NEWSLETTER
+    ══════════════════════════════════════ */
+    #newsletter {
+      padding:8rem 5%; text-align:center;
+      background:var(--blk);
+      position:relative; overflow:hidden;
+    }
+    .news-glow {
+      position:absolute; width:500px; height:500px;
+      background:radial-gradient(circle, rgba(201,147,122,.07) 0%, transparent 70%);
+      border-radius:50%; top:50%; left:50%; transform:translate(-50%,-50%);
+      pointer-events:none;
+    }
+    .news-h2 {
+      font-family:'Bodoni Moda',serif;
+      font-size:clamp(2rem,4vw,3.5rem); font-weight:300;
+      font-style:italic; color:#fff; margin:1rem 0;
+    }
+    .news-sub {
+      font-size:.85rem; font-weight:300; color:var(--muted);
+      max-width:400px; margin:0 auto 3rem;
+    }
+    .news-form {
+      display:flex; max-width:480px; margin:0 auto; gap:0;
+      position:relative; z-index:1;
+    }
+    .news-input {
+      flex:1;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      border-right:none;
+      padding:1.1rem 1.5rem;
+      color:#fff;
+      font-family:'Jost',sans-serif;
+      font-size:.85rem; font-weight:300;
+      outline:none;
+      transition:border-color .3s;
+    }
+    .news-input::placeholder { color:rgba(255,255,255,.25); }
+    .news-input:focus { border-color:var(--rose); }
+    .news-btn {
+      padding:1.1rem 2.5rem;
+      background:var(--rose); color:var(--blk);
+      font-family:'Jost',sans-serif;
+      font-size:.6rem; letter-spacing:.4em; text-transform:uppercase;
+      font-weight:600; border:none; cursor:none;
+      transition:background .3s;
+    }
+    .news-btn:hover { background:var(--rose-lt); }
+    .news-note {
+      font-size:.6rem; color:rgba(255,255,255,.2);
+      margin-top:1.2rem; letter-spacing:.1em;
+    }
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    footer {
+      background:var(--blk);
+      border-top:1px solid rgba(201,147,122,.08);
+    }
+    .footer-top {
+      padding:6rem 5% 4rem;
+      display:grid;
+      grid-template-columns:1.5fr 1fr 1fr 1fr;
+      gap:5rem;
+      max-width:1600px; margin:0 auto;
+    }
+    .ft-brand { }
+    .ft-logo {
+      font-family:'Bodoni Moda',serif;
+      font-size:1.6rem; font-weight:700; letter-spacing:.2em;
+      color:var(--rose-lt); margin-bottom:1.2rem;
+    }
+    .ft-logo em { font-style:italic; color:var(--rose); }
+    .ft-about {
+      font-size:.8rem; font-weight:300; line-height:1.9;
+      color:rgba(255,255,255,.3); max-width:260px;
+    }
+    .ft-social { display:flex; gap:1rem; margin-top:2rem; }
+    .ft-soc-link {
+      width:36px; height:36px;
+      border:1px solid rgba(201,147,122,.2);
+      display:flex; align-items:center; justify-content:center;
+      text-decoration:none; transition:border-color .3s, background .3s;
+      font-size:.65rem; color:rgba(255,255,255,.4); letter-spacing:0;
+    }
+    .ft-soc-link:hover { border-color:var(--rose); color:var(--rose); background:rgba(201,147,122,.06); }
+    .ft-col h4 {
+      font-size:.6rem; letter-spacing:.5em; text-transform:uppercase;
+      font-weight:600; color:var(--rose); margin-bottom:1.8rem;
+    }
+    .ft-col ul { list-style:none; display:flex; flex-direction:column; gap:.8rem; }
+    .ft-col ul li a {
+      font-size:.8rem; font-weight:300; color:rgba(255,255,255,.35);
+      text-decoration:none; transition:color .3s;
+      letter-spacing:.05em;
+    }
+    .ft-col ul li a:hover { color:var(--rose-lt); }
+    .footer-bottom {
+      border-top:1px solid rgba(255,255,255,.04);
+      padding:1.8rem 5%;
+      display:flex; justify-content:space-between; align-items:center;
+      flex-wrap:wrap; gap:1rem;
+      max-width:1600px; margin:0 auto;
+    }
+    .ft-copy {
+      font-size:.58rem; letter-spacing:.2em; color:rgba(255,255,255,.18);
+      text-transform:uppercase;
+    }
+    .ft-legal { display:flex; gap:2rem; }
+    .ft-legal a {
+      font-size:.58rem; letter-spacing:.2em;
+      color:rgba(255,255,255,.18); text-decoration:none;
+      text-transform:uppercase; transition:color .3s;
+    }
+    .ft-legal a:hover { color:var(--rose); }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════ */
+    @media (max-width:1100px) {
+      #featured { grid-template-columns:1fr; height:auto; }
+      .feat-panel { height:60vh; }
+      .col-grid { grid-template-columns:repeat(2,1fr); }
+      #philosophy { grid-template-columns:1fr; }
+      .phil-visual { height:50vh; }
+      .stats-band { grid-template-columns:repeat(2,1fr); }
+      .test-grid { grid-template-columns:1fr; }
+      #boutique { grid-template-columns:1fr; }
+      .bout-img { height:50vh; }
+      .footer-top { grid-template-columns:1fr 1fr; gap:3rem; }
+    }
+    @media (max-width:768px) {
+      nav { padding:1.5rem 5%; }
+      .nav-links .nav-link-text { display:none; }
+      .col-grid { grid-template-columns:1fr; }
+      .col-header { flex-direction:column; align-items:flex-start; gap:1rem; }
+      .phil-text { padding:4rem 2rem; }
+      .bout-text { padding:4rem 2rem; }
+      .footer-top { grid-template-columns:1fr; gap:2.5rem; }
+      .news-form { flex-direction:column; }
+      .news-input { border-right:1px solid rgba(255,255,255,.08); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="load-logo" id="load-logo"></div>
+  <div class="load-line"></div>
+  <p class="load-sub">Luxury Fashion House · Est. 2019</p>
+</div>
+
+<!-- ─── NAV ──────────────────────────────────────── -->
+<nav id="nav">
+  <a href="#" class="nav-logo">AURA <em>Femme</em></a>
+  <div class="nav-links">
+    <a href="#collection" class="nav-link-text">Collection</a>
+    <a href="#philosophy" class="nav-link-text">Maison</a>
+    <a href="#editorial" class="nav-link-text">Editorial</a>
+    <a href="#boutique" class="nav-link-text">Boutique</a>
+    <div class="nav-bag" style="position:relative;">
+      <div class="bag-icon"></div>
+      <span class="nav-count">2</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ─── HERO ──────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+
+  <!-- floating petals -->
+  <div id="petals-container"></div>
+
+  <div class="hero-content">
+    <p class="hero-season">Fall / Winter 2026 Collection</p>
+    <h1 class="hero-h1">Wear Your<br><em>Confidence.</em></h1>
+    <p class="hero-sub">A symphony of style, crafted for the modern woman who embraces elegance without apology.</p>
+    <div class="hero-actions">
+      <button class="btn-primary"><span>Discover the Collection</span></button>
+      <button class="btn-ghost">Our Story</button>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-bar"></div>
+  </div>
+</section>
+
+<!-- ─── MARQUEE ───────────────────────────────────── -->
+<div class="marquee-wrap" aria-hidden="true">
+  <div class="marquee-track" id="mqTrack">
+    <span class="mq-item">Elegance</span><span class="mq-star"> ✦ </span>
+    <span class="mq-item">Couture</span><span class="mq-star"> ✦ </span>
+    <span class="mq-item">Modern Femme</span><span class="mq-star"> ✦ </span>
+    <span class="mq-item">Timeless Grace</span><span class="mq-star"> ✦ </span>
+    <span class="mq-item">Artisanal Craft</span><span class="mq-star"> ✦ </span>
+    <span class="mq-item">Paris · Milan · Tokyo</span><span class="mq-star"> ✦ </span>
+    <span class="mq-item">Elegance</span><span class="mq-star"> ✦ </span>
+    <span class="mq-item">Couture</span><span class="mq-star"> ✦ </span>
+    <span class="mq-item">Modern Femme</span><span class="mq-star"> ✦ </span>
+    <span class="mq-item">Timeless Grace</span><span class="mq-star"> ✦ </span>
+    <span class="mq-item">Artisanal Craft</span><span class="mq-star"> ✦ </span>
+    <span class="mq-item">Paris · Milan · Tokyo</span><span class="mq-star"> ✦ </span>
+  </div>
+</div>
+
+<!-- ─── FEATURED PANELS ───────────────────────────── -->
+<section id="featured">
+  <div class="feat-panel">
+    <div class="feat-img"></div>
+    <div class="feat-overlay"></div>
+    <div class="feat-content">
+      <div class="feat-tag">Gowns — FW26</div>
+      <h3 class="feat-name">Rose Satin<br>Couture Gown</h3>
+      <p class="feat-price">$3,400</p>
+      <span class="feat-cta">Add to Bag</span>
+    </div>
+  </div>
+  <div class="feat-panel">
+    <div class="feat-img"></div>
+    <div class="feat-overlay"></div>
+    <div class="feat-content">
+      <div class="feat-tag">Tailoring — FW26</div>
+      <h3 class="feat-name">Ivory Power<br>Suit</h3>
+      <p class="feat-price">$2,800</p>
+      <span class="feat-cta">Add to Bag</span>
+    </div>
+  </div>
+  <div class="feat-panel">
+    <div class="feat-img"></div>
+    <div class="feat-overlay"></div>
+    <div class="feat-content">
+      <div class="feat-tag">Footwear — FW26</div>
+      <h3 class="feat-name">Velvet<br>Stilettos</h3>
+      <p class="feat-price">$1,100</p>
+      <span class="feat-cta">Add to Bag</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─── COLLECTION ────────────────────────────────── -->
+<section id="collection">
+  <div class="col-header">
+    <div>
+      <p class="s-eyebrow rv">The New Edit</p>
+      <h2 class="s-h2 rv rv-d1">Curated<br><em>Pieces</em></h2>
+    </div>
+    <a href="#" class="col-link rv rv-d2">View Full Collection →</a>
+  </div>
+  <div class="col-grid">
+    <div class="col-card rv">
+      <div class="col-card-img cc1"></div>
+      <div class="col-card-body">
+        <div class="col-card-cat">Evening — Gowns</div>
+        <div class="col-card-name">Noir Velvet Dress</div>
+        <div class="col-card-price"><span>$4,200</span><button class="col-card-btn">Buy Now →</button></div>
+      </div>
+    </div>
+    <div class="col-card rv rv-d1">
+      <div class="col-card-img cc2"></div>
+      <div class="col-card-body">
+        <div class="col-card-cat">Tailoring — Suits</div>
+        <div class="col-card-name">Chalk White Blazer</div>
+        <div class="col-card-price"><span>$2,100</span><button class="col-card-btn">Buy Now →</button></div>
+      </div>
+    </div>
+    <div class="col-card rv rv-d2">
+      <div class="col-card-img cc3"></div>
+      <div class="col-card-body">
+        <div class="col-card-cat">Daywear — Silk</div>
+        <div class="col-card-name">Rose Satin Midi</div>
+        <div class="col-card-price"><span>$1,850</span><button class="col-card-btn">Buy Now →</button></div>
+      </div>
+    </div>
+    <div class="col-card rv rv-d3">
+      <div class="col-card-img cc4"></div>
+      <div class="col-card-body">
+        <div class="col-card-cat">Footwear — Heels</div>
+        <div class="col-card-name">Velvet Stilettos</div>
+        <div class="col-card-price"><span>$1,100</span><button class="col-card-btn">Buy Now →</button></div>
+      </div>
+    </div>
+    <div class="col-card rv rv-d1">
+      <div class="col-card-img cc5"></div>
+      <div class="col-card-body">
+        <div class="col-card-cat">Fragrance — Eau de Parfum</div>
+        <div class="col-card-name">Aura No. 7</div>
+        <div class="col-card-price"><span>$380</span><button class="col-card-btn">Buy Now →</button></div>
+      </div>
+    </div>
+    <div class="col-card rv rv-d2">
+      <div class="col-card-img cc6"></div>
+      <div class="col-card-body">
+        <div class="col-card-cat">Accessories — Bags</div>
+        <div class="col-card-name">Blush Chain Bag</div>
+        <div class="col-card-price"><span>$3,600</span><button class="col-card-btn">Buy Now →</button></div>
+      </div>
+    </div>
+    <div class="col-card rv rv-d3">
+      <div class="col-card-img cc7"></div>
+      <div class="col-card-body">
+        <div class="col-card-cat">Eveningwear — Couture</div>
+        <div class="col-card-name">Ivory Column Gown</div>
+        <div class="col-card-price"><span>$6,800</span><button class="col-card-btn">Buy Now →</button></div>
+      </div>
+    </div>
+    <div class="col-card rv rv-d4">
+      <div class="col-card-img cc8"></div>
+      <div class="col-card-body">
+        <div class="col-card-cat">Resort — Linen</div>
+        <div class="col-card-name">Sand Linen Set</div>
+        <div class="col-card-price"><span>$1,450</span><button class="col-card-btn">Buy Now →</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PHILOSOPHY ────────────────────────────────── -->
+<section id="philosophy">
+  <div class="phil-visual">
+    <div class="phil-img"></div>
+    <div class="phil-veil"></div>
+    <div class="sphere-wrap">
+      <div class="sphere"></div>
+    </div>
+  </div>
+  <div class="phil-text">
+    <p class="s-eyebrow rv">La Maison</p>
+    <h2 class="s-h2 rv rv-d1">The Art of<br><em>Dressing Well</em></h2>
+    <p class="phil-body rv rv-d2">AURA was born from a singular belief: that clothing is the most intimate form of self-expression. We create for women who know their worth — and dress accordingly.</p>
+    <blockquote class="phil-quote rv rv-d3">"Elegance is not about being noticed. It is about being remembered."<br><small style="font-size:.7em; color:var(--muted); font-style:normal; letter-spacing:.2em;">— Maison AURA Manifesto</small></blockquote>
+    <p class="phil-body rv rv-d2">Every garment is a conversation between the woman who wears it and the world that witnesses her. Our ateliers in Paris, Milan, and Tokyo bring that conversation to life — one exquisite stitch at a time.</p>
+    <div style="margin-top:2rem;" class="rv rv-d3">
+      <button class="btn-primary" style="font-size:.6rem;"><span>Read Our Story</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ─── STATS ─────────────────────────────────────── -->
+<div class="stats-band">
+  <div class="stat-tile rv"><div class="stat-n">12<em>k+</em></div><div class="stat-lbl">Pieces Crafted Annually</div></div>
+  <div class="stat-tile rv rv-d1"><div class="stat-n">3<em>+</em></div><div class="stat-lbl">Global Ateliers</div></div>
+  <div class="stat-tile rv rv-d2"><div class="stat-n">48<em>+</em></div><div class="stat-lbl">Fashion Week Looks</div></div>
+  <div class="stat-tile rv rv-d3"><div class="stat-n">7<em>+</em></div><div class="stat-lbl">Years of Excellence</div></div>
+</div>
+
+<!-- ─── EDITORIAL / PARALLAX ─────────────────────── -->
+<section id="editorial">
+  <div class="ed-bg" id="edBg"></div>
+  <div class="ed-overlay"></div>
+  <div class="ed-content">
+    <p class="ed-eyebrow rv">Behind the Collection</p>
+    <h2 class="ed-h2 rv rv-d1">The Art<br>of Fitting</h2>
+    <p class="ed-p rv rv-d2">Go behind the scenes and witness the dedication to perfection in every stitch, every drape, every whispered detail of the new FW26 collection.</p>
+    <div class="rv rv-d2">
+      <div class="play-btn">
+        <div class="play-tri"></div>
+      </div>
+      <p class="play-label">Watch the Film · 4:32</p>
+    </div>
+    <br>
+    <button class="btn-ghost rv rv-d3">Explore the Editorial</button>
+  </div>
+</section>
+
+<!-- ─── TESTIMONIALS ─────────────────────────────── -->
+<section id="testimonials">
+  <div class="test-header">
+    <p class="s-eyebrow rv" style="justify-content:center; gap:1rem;">She Says</p>
+    <h2 class="s-h2 rv rv-d1" style="text-align:center;">Words From Our<br><em>Women</em></h2>
+  </div>
+  <div class="test-grid">
+    <div class="test-card rv">
+      <div class="test-stars"><span>★★★★★</span></div>
+      <div class="test-qmark">"</div>
+      <p class="test-body">Wearing AURA changed how I carry myself. The Rose Satin Gown was the centrepiece of the entire evening — every woman in the room wanted to know who I was wearing.</p>
+      <div class="test-author">Elena V.</div>
+      <div class="test-role">Creative Director, Paris</div>
+    </div>
+    <div class="test-card rv rv-d1">
+      <div class="test-stars"><span>★★★★★</span></div>
+      <div class="test-qmark">"</div>
+      <p class="test-body">The craftsmanship is extraordinary. You can feel the ateliers in every seam. My Ivory Power Suit has become my second skin — I wear it and I conquer.</p>
+      <div class="test-author">Mirae K.</div>
+      <div class="test-role">Architect, Seoul</div>
+    </div>
+    <div class="test-card rv rv-d2">
+      <div class="test-stars"><span>★★★★★</span></div>
+      <div class="test-qmark">"</div>
+      <p class="test-body">AURA understands women. Not just our bodies but our ambitions, our rituals, our quiet power. There is no other brand quite like this.</p>
+      <div class="test-author">Isabella R.</div>
+      <div class="test-role">Editor-in-Chief, Milan</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BOUTIQUE ──────────────────────────────────── -->
+<section id="boutique">
+  <div class="bout-img"></div>
+  <div class="bout-text">
+    <p class="s-eyebrow rv">Our Flagship</p>
+    <h2 class="s-h2 rv rv-d1">Paris<br><em>Boutique</em></h2>
+    <div class="bout-detail rv rv-d2">
+      <div class="bout-row">
+        <span class="bout-key">Address</span>
+        <span class="bout-val">14 Rue du Faubourg Saint-Honoré</span>
+      </div>
+      <div class="bout-row">
+        <span class="bout-key">City</span>
+        <span class="bout-val">75008 Paris, France</span>
+      </div>
+      <div class="bout-row">
+        <span class="bout-key">Hours</span>
+        <span class="bout-val">Mon – Sat, 10:00 – 19:00</span>
+      </div>
+      <div class="bout-row">
+        <span class="bout-key">Enquiries</span>
+        <span class="bout-val">boutique@aurafemme.com</span>
+      </div>
+      <div class="bout-row">
+        <span class="bout-key">Also In</span>
+        <span class="bout-val">Milan · Tokyo · New York</span>
+      </div>
+    </div>
+    <button class="btn-primary bout-cta rv rv-d3" style="font-size:.6rem;"><span>Book a Private Appointment</span></button>
+  </div>
+</section>
+
+<!-- ─── NEWSLETTER ────────────────────────────────── -->
+<section id="newsletter">
+  <div class="news-glow"></div>
+  <p class="s-eyebrow rv" style="justify-content:center;">Stay Connected</p>
+  <h2 class="news-h2 rv rv-d1">The AURA Inner Circle</h2>
+  <p class="news-sub rv rv-d2">Exclusive previews, private events, and the first look at every new collection — delivered to you alone.</p>
+  <div class="news-form rv rv-d3">
+    <input class="news-input" type="email" placeholder="Your email address" />
+    <button class="news-btn">Join</button>
+  </div>
+  <p class="news-note rv rv-d4">No noise. No spam. Just elegance, whenever you are ready.</p>
+</section>
+
+<!-- ─── FOOTER ────────────────────────────────────── -->
+<footer>
+  <div class="footer-top">
+    <div class="ft-brand">
+      <div class="ft-logo">AURA <em>Femme</em></div>
+      <p class="ft-about">A luxury fashion house founded on the belief that every woman deserves to feel like the protagonist of her own story.</p>
+      <div class="ft-social">
+        <a class="ft-soc-link" href="#">in</a>
+        <a class="ft-soc-link" href="#">ig</a>
+        <a class="ft-soc-link" href="#">pi</a>
+        <a class="ft-soc-link" href="#">tt</a>
+      </div>
+    </div>
+    <div class="ft-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="#">New Arrivals</a></li>
+        <li><a href="#">Gowns & Couture</a></li>
+        <li><a href="#">Tailoring</a></li>
+        <li><a href="#">Accessories</a></li>
+        <li><a href="#">Fragrance</a></li>
+        <li><a href="#">Archive Sale</a></li>
+      </ul>
+    </div>
+    <div class="ft-col">
+      <h4>Maison</h4>
+      <ul>
+        <li><a href="#">Our Story</a></li>
+        <li><a href="#">Ateliers</a></li>
+        <li><a href="#">Craftsmanship</a></li>
+        <li><a href="#">Sustainability</a></li>
+        <li><a href="#">Press Room</a></li>
+        <li><a href="#">Careers</a></li>
+      </ul>
+    </div>
+    <div class="ft-col">
+      <h4>Client Services</h4>
+      <ul>
+        <li><a href="#">Boutiques</a></li>
+        <li><a href="#">Private Appointments</a></li>
+        <li><a href="#">Returns & Exchanges</a></li>
+        <li><a href="#">Care Guide</a></li>
+        <li><a href="#">Contact Us</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="ft-copy">© 2026 AURA Luxury Group. All Rights Reserved.</span>
+    <div class="ft-legal">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Cookie Settings</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── LOADER ─────────────────────────────── */
+const BRAND = 'AURA FEMME';
+const ll = document.getElementById('load-logo');
+BRAND.split('').forEach((c, i) => {
+  const s = document.createElement('span');
+  s.textContent = c === ' ' ? '\u00a0' : c;
+  s.style.setProperty('--i', i);
+  ll.appendChild(s);
+});
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('loader').classList.add('gone'), 2000);
+});
+
+/* ── CUSTOM CURSOR ──────────────────────── */
+const dot = document.getElementById('cur-dot');
+const ring = document.getElementById('cur-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+(function animC() {
+  dot.style.cssText = `left:${mx}px;top:${my}px;`;
+  rx += (mx - rx) * .11; ry += (my - ry) * .11;
+  ring.style.cssText = `left:${rx}px;top:${ry}px;`;
+  requestAnimationFrame(animC);
+})();
+document.querySelectorAll('a,button,.col-card,.feat-panel,.stat-tile,.test-card,.play-btn').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('hovered'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('hovered'));
+});
+
+/* ── SCROLL NAV ─────────────────────────── */
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('stuck', scrollY > 80);
+});
+
+/* ── SCROLL REVEAL ──────────────────────── */
+const rvEls = document.querySelectorAll('.rv');
+const rvObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); rvObs.unobserve(e.target); } });
+}, { threshold: .12 });
+rvEls.forEach(el => rvObs.observe(el));
+
+/* ── PARALLAX EDITORIAL ─────────────────── */
+const edBg = document.getElementById('edBg');
+window.addEventListener('scroll', () => {
+  const ed = document.getElementById('editorial');
+  if (!ed) return;
+  const rect = ed.getBoundingClientRect();
+  const mid = rect.top + rect.height / 2;
+  const off = (window.innerHeight / 2 - mid) * 0.25;
+  edBg.style.transform = `translateY(${off}px)`;
+});
+
+/* ── FLOATING PETALS ────────────────────── */
+const container = document.getElementById('petals-container');
+for (let i = 0; i < 18; i++) {
+  const p = document.createElement('div');
+  p.className = 'petal';
+  const sz = Math.random() * 12 + 5;
+  const hue = Math.random() > .5 ? '#c9937a' : '#e8c4b4';
+  Object.assign(p.style, {
+    width: sz + 'px', height: sz * .6 + 'px',
+    background: hue,
+    left: Math.random() * 100 + 'vw',
+    animationDuration: (Math.random() * 10 + 8) + 's',
+    animationDelay: (Math.random() * 12) + 's',
+    opacity: '0',
+    transform: `rotate(${Math.random()*360}deg)`,
+  });
+  container.appendChild(p);
+}
+
+/* ── STAT COUNTER ANIMATION ─────────────── */
+const statNs = document.querySelectorAll('.stat-n');
+const statTargets = [12, 3, 48, 7];
+const sObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const i = [...statNs].indexOf(e.target);
+    const em = e.target.querySelector('em');
+    const emHTML = em ? em.outerHTML : '';
+    let start = 0; const dur = 1600; const target = statTargets[i];
+    const step = ts => {
+      if (!start) start = ts;
+      const p = Math.min((ts - start) / dur, 1);
+      const val = Math.floor((1 - Math.pow(1 - p, 3)) * target);
+      e.target.innerHTML = val + emHTML;
+      if (p < 1) requestAnimationFrame(step);
+      else e.target.innerHTML = target + emHTML;
+    };
+    requestAnimationFrame(step);
+    sObs.unobserve(e.target);
+  });
+}, { threshold: .6 });
+statNs.forEach(n => sObs.observe(n));
+</script>
+</body>
+</html>
